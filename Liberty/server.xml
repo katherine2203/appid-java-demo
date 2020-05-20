@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="new server">
+    <!-- Enable features -->
+    <featureManager>
+        <feature>ssl-1.0</feature>
+        <feature>servlet-3.1</feature>
+        <feature>appSecurity-2.0</feature>
+        <feature>openidConnectClient-1.0</feature>
+    </featureManager>
+    <openidConnectClient id="MyRP"
+                         clientId="f7a8c628-ffd9-462f-9224-38bf84dc43bf"
+                         clientSecret="YTY4ODBjM2EtNmM3YS00MmJhLTk5ZGUtZTI5OGNjNjc3NTEz"
+                         authorizationEndpointUrl="https://us-south.appid.cloud.ibm.com/oauth/v4/6175deb4-df78-4619-a9ce-eb43b433d708/authorization"
+                         tokenEndpointUrl="https://us-south.appid.cloud.ibm.com/oauth/v4/6175deb4-df78-4619-a9ce-eb43b433d708/token"
+                         jwkEndpointUrl="https://us-south.appid.cloud.ibm.com/oauth/v4/6175deb4-df78-4619-a9ce-eb43b433d708/publickeys"
+                         issuerIdentifier="https://us-south.appid.cloud.ibm.com/oauth/v4/6175deb4-df78-4619-a9ce-eb43b433d708"
+                         tokenEndpointAuthMethod="basic"
+                         signatureAlgorithm="RS256"
+                         authFilterid="myAuthFilter"
+                         redirectToRPHostAndPort="https://${env.APPID_SAMPLE_HOST}:${env.APPID_SAMPLE_SSL_PORT}"
+    />
+    <authFilter id="myAuthFilter">
+        <requestUrl id="myRequestUrl" urlPattern="/ProtectedServlet" matchType="contains"/>
+    </authFilter>
+    <keyStore id="defaultKeyStore" password="myPassword"/>
+    <keyStore id="appidtruststore" password="Liberty" location="${server.config.dir}/mytruststore.jks"/>
+    <ssl id="defaultSSLConfig" keyStoreRef="defaultKeyStore" trustStoreRef="appidtruststore"/>
+            <application type="war" id="ProtectedServlet" context-root="/appidSample" location="${server.config.dir}/apps/libertySample-1.0.0.war">
+            <application-bnd>
+                <security-role name="myrole">
+                <special-subject type="ALL_AUTHENTICATED_USERS" />
+                </security-role>
+                    </application-bnd>
+                </application>
+    <applicationManager autoExpand="true"/>
+    <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="9080"
+                  host="*"
+                  httpsPort="9443" />
+</server>
